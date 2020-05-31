@@ -3,7 +3,15 @@ import { GraphQLResolverMap } from 'apollo-graphql';
 
 export const name = 'accounts';
 export const typeDefs = gql`
-  extend type Query {
+  directive @stream on FIELD
+  directive @transform(from: String!) on FIELD
+
+  schema {
+    query: RootQuery
+    mutation: Mutation
+  }
+
+  extend type RootQuery {
     user(id: ID!): User
     me: User
   }
@@ -33,7 +41,7 @@ export const typeDefs = gql`
     metadata: [UserMetadata]
   }
 
-  extend type Mutation {
+  type Mutation {
     login(username: String!, password: String!): User
   }
 
@@ -77,7 +85,7 @@ const libraryUsers: { [name: string]: string[] } = {
 };
 
 export const resolvers: GraphQLResolverMap<any> = {
-  Query: {
+  RootQuery: {
     user(_, args) {
       return { id: args.id };
     },
